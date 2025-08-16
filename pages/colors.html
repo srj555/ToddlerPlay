@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Color Splash — Toddler Play</title>
+<link rel="stylesheet" href="../styles.css"/>
+<script defer src="../js/common.js"></script>
+</head>
+<body>
+<header class="header">
+  <div class="bar container">
+    <div class="brand"><span class="dot"></span> Toddler Play</div>
+    <div class="spacer"></div>
+    <a class="button" href="../index.html">🏠 Home</a>
+  </div>
+</header>
+
+<main class="container">
+  <h1>🌈 Color Splash</h1>
+  <div class="tile center" id="panel" style="height:60vh; flex-direction:column; gap:12px">
+    <div id="blob" style="width:48vmin; height:48vmin; border-radius:50%; box-shadow:0 20px 40px rgba(0,0,0,.35)"></div>
+    <div class="big" id="label">RED</div>
+    <div class="row">
+      <button class="button" id="prev">◀</button>
+      <button class="button" id="say">🔊</button>
+      <button class="button" id="next">▶</button>
+      <button class="button" id="auto">Auto</button>
+    </div>
+  </div>
+  <div class="footer">Tip: tap anywhere to go to the next color.</div>
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  App.initTheme();
+  const COLORS = [
+    ["RED", "#ff4d4d"], ["ORANGE","#ff8a33"], ["YELLOW","#ffd93b"],
+    ["GREEN","#2ecc71"], ["BLUE","#3498db"], ["PURPLE","#9b59b6"],
+    ["PINK","#ff7eb6"], ["BROWN","#8e6430"], ["BLACK","#111318"], ["WHITE","#f8fbff"]
+  ];
+  const blob = document.getElementById("blob");
+  const label = document.getElementById("label");
+  const panel = document.getElementById("panel");
+  let i = 0, auto=null;
+
+  function show(idx){
+    i = (idx+COLORS.length)%COLORS.length;
+    const [name, hex] = COLORS[i];
+    blob.style.background = hex;
+    label.textContent = name;
+    panel.style.borderColor = hex;
+    App.speak(name);
+    const rect = blob.getBoundingClientRect();
+    App.softBurst(rect.left + rect.width/2, rect.top + rect.height/2);
+  }
+  function next(){ show(i+1); }
+  function prev(){ show(i-1); }
+
+  document.getElementById("next").onclick = next;
+  document.getElementById("prev").onclick = prev;
+  document.getElementById("say").onclick = ()=> App.speak(COLORS[i][0]);
+  document.getElementById("auto").onclick = ()=>{
+    if (auto){ clearInterval(auto); auto=null; document.getElementById("auto").textContent="Auto"; }
+    else { auto = setInterval(next, 1800); document.getElementById("auto").textContent="Stop"; }
+  };
+  panel.addEventListener("click", next);
+  panel.addEventListener("touchstart", ()=> next(), {passive:true});
+  show(0);
+});
+</script>
+</body>
+</html>

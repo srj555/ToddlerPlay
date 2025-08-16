@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Drum Pads — Toddler Play</title>
+<link rel="stylesheet" href="../styles.css"/>
+<script defer src="../js/common.js"></script>
+</head>
+<body>
+<header class="header">
+  <div class="bar container">
+    <div class="brand"><span class="dot"></span> Toddler Play</div>
+    <div class="spacer"></div>
+    <a class="button" href="../index.html">🏠 Home</a>
+  </div>
+</header>
+
+<main class="container">
+  <h1>🥁 Drum Pads</h1>
+  <div class="grid">
+    <div class="tile big" data-snd="kick" style="background:linear-gradient(180deg,#2a1f4a,#1d1736)">Kick</div>
+    <div class="tile big" data-snd="snare" style="background:linear-gradient(180deg,#1f4a3a,#162f28)">Snare</div>
+    <div class="tile big" data-snd="hat" style="background:linear-gradient(180deg,#4a3a1f,#2a2116)">Hat</div>
+    <div class="tile big" data-snd="tom1" style="background:linear-gradient(180deg,#1f3a4a,#142735)">Tom</div>
+    <div class="tile big" data-snd="tom2" style="background:linear-gradient(180deg,#3a1f2a,#2a1620)">Tom</div>
+    <div class="tile big" data-snd="pop" style="background:linear-gradient(180deg,#1f2a4a,#131d36)">Pop</div>
+  </div>
+  <div class="footer">Multi‑touch friendly. Try drumming with both hands!</div>
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  App.initTheme();
+  const sound = App.audio();
+  const map = {
+    kick: ()=> sound.kick(),
+    snare: ()=> sound.snare(),
+    hat: ()=> sound.hat(),
+    tom1: ()=> sound.tom(220),
+    tom2: ()=> sound.tom(160),
+    pop: ()=> sound.pop(),
+  };
+  document.querySelectorAll(".tile.big").forEach(p=>{
+    function trigger(x,y){ const r=p.getBoundingClientRect(); App.ripple(p, x-r.left, y-r.top); const key=p.getAttribute("data-snd"); (map[key]||(()=>{}))(); App.softBurst(r.left+r.width/2, r.top+r.height/2); }
+    p.addEventListener("click", e=> trigger(e.clientX, e.clientY));
+    p.addEventListener("touchstart", e=>{ for(const t of e.changedTouches){ trigger(t.clientX, t.clientY);} }, {passive:true});
+  });
+});
+</script>
+</body>
+</html>

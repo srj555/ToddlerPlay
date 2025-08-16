@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pop Bubbles — Toddler Play</title>
+<link rel="stylesheet" href="../styles.css"/>
+<script defer src="../js/common.js"></script>
+</head>
+<body>
+<header class="header">
+  <div class="bar container">
+    <div class="brand"><span class="dot"></span> Toddler Play</div>
+    <div class="spacer"></div>
+    <a class="button" href="../index.html">🏠 Home</a>
+  </div>
+</header>
+
+<main class="container">
+  <h1>🫧 Pop Bubbles</h1>
+  <div class="hint">Tap bubbles to pop. Soft colors, gentle sounds.</div>
+  <div class="tile" id="play" style="height:68vh; margin-top:14px"></div>
+  <div class="footer">Tip: try tapping with two fingers!</div>
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  App.initTheme();
+  const SND = App.audio();
+  const el = document.getElementById("play");
+  const canvas = document.createElement("canvas");
+  canvas.style.width = "100%"; canvas.style.height = "100%";
+  canvas.width = el.clientWidth * (devicePixelRatio||1);
+  canvas.height = el.clientHeight * (devicePixelRatio||1);
+  el.appendChild(canvas);
+  const ctx = canvas.getContext("2d");
+  let bubbles = []; let popped = 0;
+
+  function spawn(n=6){
+    for(let i=0;i<n;i++){
+      bubbles.push({
+        x: Math.random()*canvas.width, y: canvas.height + Math.random()*200,
+        r: (30+Math.random()*60) * (devicePixelRatio||1),
+        v: 0.6 + Math.random()*1.2,
+        hue: Math.floor(Math.random()*360),
+        alpha: .75
+      });
+    }
+  }
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for(const b of bubbles){
+      b.y -= b.v*(devicePixelRatio||1);
+      const grad = ctx.createRadialGradient(b.x, b.y, b.r*0.1, b.x, b.y, b.r);
+      grad.addColorStop(0, `hsla(${b.hue}, 90%, 70%, ${b.alpha})`);
+      grad.addColorStop(1, `hsla(${(b.hue+40)%360}, 80%, 40%, ${b.alpha*0.6})`);
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
+    }
+    bubbles = bubbles.filter(b => b.y + b.r > 0);
+    if (bubbles.length < 14) spawn(6);
+    requestAnimationFrame(draw);
+  }
+  spawn(14); draw();
+
+  function popAt(x,y){
+    const DPR = devicePixelRatio||1;
+    const mx = x*DPR, my = y*DPR;
+    for (let i=bubbles.length-1;i>=0;i--){
+      const b=bubbles[i]; const dx=b.x-mx, dy=b.y-my;
+      if (dx*dx+dy*dy <= b.r*b.r){
+        bubbles.splice(i,1);
+        SND.pop();
+        App.softBurst(x,y);
+        popped++; if (popped%10===0) App.softBurst(x,y);
+        break;
+      }
+    }
+  }
+
+  function handle(e){
+    const rect = canvas.getBoundingClientRect();
+    if (e.touches){
+      for (const t of e.touches){ popAt(t.clientX-rect.left, t.clientY-rect.top); }
+    } else {
+      popAt(e.clientX-rect.left, e.clientY-rect.top);
+    }
+  }
+  canvas.addEventListener("click", handle);
+  canvas.addEventListener("touchstart", (e)=>{ e.preventDefault(); handle(e); }, {passive:false});
+});
+</script>
+</body>
+</html>

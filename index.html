@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Toddler Play</title>
+<link rel="stylesheet" href="styles.css"/>
+<script defer src="js/common.js"></script>
+</head>
+<body>
+<header class="header">
+  <div class="bar container">
+    <div class="brand"><span class="dot"></span> Toddler Play</div>
+    <div class="spacer"></div>
+    <label class="chip">Theme
+      <select id="themeSel" aria-label="Theme"></select>
+    </label>
+    <a class="button" href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</header>
+
+<main class="container">
+  <h1 style="margin:6px 0">Play & Discover</h1>
+  <p class="hint">Big buttons • Smooth animations • Gentle sounds</p>
+  <div class="grid" style="margin-top:16px">
+    <a class="card" href="pages/pop.html"><div class="emoji">🫧</div><h3>Pop Bubbles</h3><p>Tap the bubbles to pop!</p></a>
+    <a class="card" href="pages/animals.html"><div class="emoji">🐾</div><h3>Animal Sounds</h3><p>Tap animals to hear them.</p></a>
+    <a class="card" href="pages/drum.html"><div class="emoji">🥁</div><h3>Drum Pads</h3><p>Big colorful sounds.</p></a>
+    <a class="card" href="pages/colors.html"><div class="emoji">🌈</div><h3>Color Splash</h3><p>Tap to change color.</p></a>
+  </div>
+  <div class="footer">© Toddler Play — Works offline • No data collection</div>
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded", App.initTheme);
+</script>
+</body>
+</html>
