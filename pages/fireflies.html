@@ -1,0 +1,14 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="manifest" href="../manifest.webmanifest"><title>Fireflies</title><link rel="stylesheet" href="../styles.css"/><script defer src="../js/common.js"></script></head><body>
+<header class="header"><div class="bar container"><div class="brand"><span class="dot"></span> Toddler Play</div><div class="spacer"></div><a class="button" href="sensory.html">⬅ Back</a></div></header>
+<main class="container"><div class="breadcrumb"><a href="../index.html">Home</a> › <a href="sensory.html">Sensory Play</a> › Fireflies</div><h1>🌟 Fireflies</h1>
+<div class="tile" id="field" style="height:68vh; margin-top:14px"></div></main>
+<script>
+document.addEventListener("DOMContentLoaded",()=>{ App.init(); const el=document.getElementById("field"); const c=document.createElement("canvas"); const DPR=devicePixelRatio||1;
+function size(){ c.width=el.clientWidth*DPR; c.height=el.clientHeight*DPR; c.style.width="100%"; c.style.height="100%"; } size(); addEventListener("resize", size); el.appendChild(c);
+const ctx=c.getContext("2d"); let bugs=[]; function add(x,y){ bugs.push({x:x*DPR,y:y*DPR,a:Math.random()*Math.PI*2,s:.3+.6*Math.random(),r:8+Math.random()*10,t:0,color:`hsla(${Math.floor(Math.random()*60)+40},100%,70%,1)`}); }
+function draw(){ ctx.clearRect(0,0,c.width,c.height); for(const b of bugs){ b.a+=(Math.random()-.5)*.2; b.x+=Math.cos(b.a)*b.s*DPR; b.y+=Math.sin(b.a)*b.s*DPR; b.t+=.04; const glow=(Math.sin(b.t)+1)/2; ctx.beginPath(); ctx.fillStyle=b.color; ctx.shadowBlur=40*glow*DPR; ctx.shadowColor=b.color; ctx.arc(b.x,b.y,b.r*glow+2,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0; } requestAnimationFrame(draw); }
+for(let i=0;i<12;i++) add(Math.random()*el.clientWidth, Math.random()*el.clientHeight); draw();
+function tap(e){ const r=c.getBoundingClientRect(); const x=(e.touches?e.touches[0].clientX:e.clientX)-r.left; const y=(e.touches?e.touches[0].clientY:e.clientY)-r.top; add(x,y); App.tone(880,.1,"sine",.3); App.softBurst(x,y); }
+c.addEventListener("click",tap); c.addEventListener("touchstart",(e)=>{ e.preventDefault(); tap(e); }, {passive:false}); });
+</script></body></html>

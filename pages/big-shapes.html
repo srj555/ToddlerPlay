@@ -1,0 +1,28 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="manifest" href="../manifest.webmanifest"><title>Big Shapes</title><link rel="stylesheet" href="../styles.css"/><script defer src="../js/common.js"></script></head><body>
+<header class="header"><div class="bar container"><div class="brand"><span class="dot"></span> Toddler Play</div><div class="spacer"></div><a class="button" href="shapes.html">⬅ Back</a></div></header>
+<main class="container"><div class="breadcrumb"><a href="../index.html">Home</a> › <a href="shapes.html">Shapes & Colors</a> › Big Shapes</div><h1>🟣 Big Shapes</h1>
+<div class="tile center" id="panel" style="height:60vh; flex-direction:column; gap:12px">
+  <canvas id="shape" style="width:60vmin; height:60vmin"></canvas>
+  <div class="big" id="label">CIRCLE</div>
+  <div class="row"><button class="button" id="prev">◀</button><button class="button" id="say">🔊</button><button class="button" id="next">▶</button></div>
+</div></main>
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+  App.init();
+  const items=[["CIRCLE","circle","#ff4d4d"],["SQUARE","square","#ff8a33"],["TRIANGLE","triangle","#ffd93b"],["STAR","star","#9b59b6"]];
+  const cv=document.getElementById("shape"); const DPR=devicePixelRatio||1; function size(){ cv.width=cv.clientWidth*DPR; cv.height=cv.clientHeight*DPR; } size(); addEventListener("resize", size);
+  const ctx=cv.getContext("2d"); const label=document.getElementById("label"); let i=0;
+  function draw(kind,col){ const w=cv.width,h=cv.height,r=Math.min(w,h)*0.33; ctx.clearRect(0,0,w,h); ctx.fillStyle=col; ctx.beginPath();
+    if(kind==="circle"){ ctx.arc(w/2,h/2,r,0,Math.PI*2); }
+    if(kind==="square"){ ctx.rect(w/2-r,h/2-r,r*2,r*2); }
+    if(kind==="triangle"){ ctx.moveTo(w/2,h/2-r); ctx.lineTo(w/2+r,h/2+r); ctx.lineTo(w/2-r,h/2+r); ctx.closePath(); }
+    if(kind==="star"){ const spikes=5,outer=r,inner=r*.5; let rot=Math.PI/2*3,x=w/2,y=h/2; ctx.moveTo(w/2,h/2-outer);
+      for(let j=0;j<spikes;j++){ x=w/2+Math.cos(rot)*outer; y=h/2+Math.sin(rot)*outer; ctx.lineTo(x,y); rot+=Math.PI/spikes; x=w/2+Math.cos(rot)*inner; y=h/2+Math.sin(rot)*inner; ctx.lineTo(x,y); rot+=Math.PI/spikes; } ctx.lineTo(w/2,h/2-outer); ctx.closePath(); }
+    ctx.fill(); }
+  function show(k){ i=(k+items.length)%items.length; const [name,kind,col]=items[i]; label.textContent=name; draw(kind,col); App.speak(name); const r=cv.getBoundingClientRect(); App.softBurst(r.left+r.width/2, r.top+r.height/2); }
+  document.getElementById("next").onclick=()=>show(i+1); document.getElementById("prev").onclick=()=>show(i-1); document.getElementById("say").onclick=()=>App.speak(items[i][0]);
+  cv.addEventListener("click",()=>App.speak(items[i][0]));
+  show(0);
+});
+</script></body></html>

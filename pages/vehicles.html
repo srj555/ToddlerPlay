@@ -1,0 +1,13 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="manifest" href="../manifest.webmanifest"><title>Vehicles</title><link rel="stylesheet" href="../styles.css"/><script defer src="../js/common.js"></script></head><body>
+<header class="header"><div class="bar container"><div class="brand"><span class="dot"></span> Toddler Play</div><div class="spacer"></div><a class="button" href="words.html">⬅ Back</a></div></header>
+<main class="container"><div class="breadcrumb"><a href="../index.html">Home</a> › <a href="words.html">First Words</a> › Vehicles</div><h1>🚗 Vehicles</h1>
+<div class="grid"><div class="tile big" data-name="Car" data-say="Vroom!">🚗</div><div class="tile big" data-name="Bus" data-say="Honk honk!">🚌</div><div class="tile big" data-name="Train" data-say="Choo choo!">🚂</div><div class="tile big" data-name="Airplane" data-say="Whoosh!">✈️</div><div class="tile big" data-name="Boat" data-say="Toot toot!">⛵</div><div class="tile big" data-name="Tractor" data-say="Brmmm!">🚜</div></div></main>
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+  App.init();
+  document.querySelectorAll(".tile.big").forEach(p=>{
+    p.addEventListener("click",e=>{ const r=p.getBoundingClientRect(); App.ripple(p,e.clientX-r.left,e.clientY-r.top); App.speak(`${p.getAttribute("data-name")}. ${p.getAttribute("data-say")}`); App.softBurst(r.left+r.width/2, r.top+r.height/2); });
+  });
+});
+</script></body></html>

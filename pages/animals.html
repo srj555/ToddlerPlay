@@ -1,57 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Animal Sounds — Toddler Play</title>
-<link rel="stylesheet" href="../styles.css"/>
-<script defer src="../js/common.js"></script>
-</head>
-<body>
-<header class="header">
-  <div class="bar container">
-    <div class="brand"><span class="dot"></span> Toddler Play</div>
-    <div class="spacer"></div>
-    <a class="button" href="../index.html">🏠 Home</a>
-  </div>
-</header>
-
-<main class="container">
-  <h1>🐾 Animal Sounds</h1>
-  <div class="grid">
-    <div class="tile big" data-name="Dog" data-say="Woof!">🐶</div>
-    <div class="tile big" data-name="Cat" data-say="Meow!">🐱</div>
-    <div class="tile big" data-name="Cow" data-say="Moo!">🐮</div>
-    <div class="tile big" data-name="Sheep" data-say="Baa!">🐑</div>
-    <div class="tile big" data-name="Monkey" data-say="Oo-oo!">🐵</div>
-    <div class="tile big" data-name="Elephant" data-say="Pawoo!">🐘</div>
-  </div>
-  <div class="footer">Tap an animal — we’ll say the name and sound.</div>
-</main>
-
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="manifest" href="../manifest.webmanifest"><title>Animals</title><link rel="stylesheet" href="../styles.css"/><script defer src="../js/common.js"></script></head><body>
+<header class="header"><div class="bar container"><div class="brand"><span class="dot"></span> Toddler Play</div><div class="spacer"></div><a class="button" href="words.html">⬅ Back</a></div></header>
+<main class="container"><div class="breadcrumb"><a href="../index.html">Home</a> › <a href="words.html">First Words</a> › Animals</div><h1>🐾 Animals</h1>
+<div class="grid"><div class="tile big" data-name="Dog" data-say="Woof!">🐶</div><div class="tile big" data-name="Cat" data-say="Meow!">🐱</div><div class="tile big" data-name="Cow" data-say="Moo!">🐮</div><div class="tile big" data-name="Sheep" data-say="Baa!">🐑</div><div class="tile big" data-name="Monkey" data-say="Oo-oo!">🐵</div><div class="tile big" data-name="Elephant" data-say="Pawoo!">🐘</div></div></main>
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  App.initTheme();
-  const pads = document.querySelectorAll(".tile.big");
-  pads.forEach(p=>{
-    p.addEventListener("click", (e)=>{
-      const rect = p.getBoundingClientRect();
-      App.ripple(p, e.clientX - rect.left, e.clientY - rect.top);
-      const name = p.getAttribute("data-name");
-      const say = p.getAttribute("data-say");
-      App.speak(`${name}. ${say}`);
-      App.softBurst(rect.left + rect.width/2, rect.top + rect.height/2);
-    });
-    p.addEventListener("touchstart", (e)=>{
-      const t = e.changedTouches[0]; const rect=p.getBoundingClientRect();
-      App.ripple(p, t.clientX - rect.left, t.clientY - rect.top);
-      const name = p.getAttribute("data-name");
-      const say = p.getAttribute("data-say");
-      App.speak(`${name}. ${say}`);
-      App.softBurst(rect.left + rect.width/2, rect.top + rect.height/2);
-    }, {passive:true});
+document.addEventListener("DOMContentLoaded",()=>{
+  App.init();
+  document.querySelectorAll(".tile.big").forEach(p=>{
+    p.addEventListener("click",e=>{ const r=p.getBoundingClientRect(); App.ripple(p,e.clientX-r.left,e.clientY-r.top); App.speak(`${p.getAttribute("data-name")}. ${p.getAttribute("data-say")}`); App.softBurst(r.left+r.width/2, r.top+r.height/2); });
   });
 });
-</script>
-</body>
-</html>
+</script></body></html>

@@ -1,112 +1,100 @@
-// Common for toddlers: theme manager, ripple, gentle confetti, voice + simple WebAudio drums
+
+// Confetti palette remains colorful regardless of theme
+const SOFT_COLORS = ["#FFD36E","#FF9FB3","#7BE3FF","#AEF1CF","#BCA8FF"];
+
 const App = (()=>{
-  const LS = "toddlerThemeV1";
-  const THEMES = [
-    {name:"Candy Pop",   vars:{bg1:"#0f1226",bg2:"#201848",panel:"#1a1f44cc",card:"#1b214e",card2:"#222a60",accent:"#ffd36e",accent2:"#ff9fb3",accent3:"#7be3ff",accent4:"#aef1cf",accent5:"#bca8ff",text:"#ffffff",muted:"#bfd3ff",outline:"#33407a",pad:"#171d45",padb:"#2b3572"}},
-    {name:"Ocean Breeze",vars:{bg1:"#081a2a",bg2:"#123b5a",panel:"#0e253ecc",card:"#0f2a48",card2:"#13335a",accent:"#7be3ff",accent2:"#b0f3ff",accent3:"#aef1cf",accent4:"#ffd36e",accent5:"#ff9fb3",text:"#ecfbff",muted:"#bfe8ff",outline:"#1f4d76",pad:"#0e2542",padb:"#1c4872"}},
-    {name:"Sunset Sorbet",vars:{bg1:"#2a0d1c",bg2:"#4a1040",panel:"#311334cc",card:"#3a173f",card2:"#4a1d4f",accent:"#ff9fb3",accent2:"#ffd36e",accent3:"#7be3ff",accent4:"#aef1cf",accent5:"#bca8ff",text:"#fff5f8",muted:"#ffd7e2",outline:"#5a2a6f",pad:"#321540",padb:"#5a2a76"}},
-    {name:"Forest Mint", vars:{bg1:"#0d1a14",bg2:"#163a2a",panel:"#0e261ecc",card:"#123428",card2:"#184233",accent:"#aef1cf",accent2:"#7be3ff",accent3:"#ffd36e",accent4:"#ff9fb3",accent5:"#bca8ff",text:"#edfff8",muted:"#c8ffe8",outline:"#1f5a48",pad:"#0e2a22",padb:"#1c5a48"}},
-    {name:"High Contrast",vars:{bg1:"#000000",bg2:"#131313",panel:"#111111e6",card:"#111111",card2:"#191919",accent:"#ffd000",accent2:"#ff2a6f",accent3:"#00d5ff",accent4:"#00ffa3",accent5:"#b38cff",text:"#ffffff",muted:"#d9d9d9",outline:"#2a2a2a",pad:"#101010",padb:"#2a2a2a"}},
-  ];
+  function ripple(el,x,y){ const r=document.createElement("span"); r.className="ripple"; r.style.left=x+"px"; r.style.top=y+"px"; el.appendChild(r); setTimeout(()=>r.remove(),650); }
 
-  function applyTheme(t){
-    const root = document.documentElement;
-    root.style.setProperty("--bg1", t.vars.bg1);
-    root.style.setProperty("--bg2", t.vars.bg2);
-    root.style.setProperty("--panel", t.vars.panel);
-    root.style.setProperty("--card", t.vars.card);
-    root.style.setProperty("--card2", t.vars.card2);
-    root.style.setProperty("--accent", t.vars.accent);
-    root.style.setProperty("--accent2", t.vars.accent2);
-    root.style.setProperty("--accent3", t.vars.accent3);
-    root.style.setProperty("--accent4", t.vars.accent4);
-    root.style.setProperty("--accent5", t.vars.accent5);
-    root.style.setProperty("--text", t.vars.text);
-    root.style.setProperty("--muted", t.vars.muted);
-    root.style.setProperty("--outline", t.vars.outline);
-    root.style.setProperty("--pad", t.vars.pad);
-    root.style.setProperty("--pad-border", t.vars.padb);
-  }
-
-  function initTheme(){
-    let idx = Number(localStorage.getItem(LS) || "0");
-    if (isNaN(idx) || idx<0 || idx>=THEMES.length) idx = 0;
-    applyTheme(THEMES[idx]);
-    const sel = document.getElementById("themeSel");
-    if (sel){
-      sel.innerHTML = THEMES.map((t,i)=> `<option value="${i}" ${i===idx?"selected":""}>${t.name}</option>`).join("");
-      sel.onchange = ()=>{ const i = Number(sel.value); applyTheme(THEMES[i]); localStorage.setItem(LS, String(i)); };
-    }
-  }
-
-  // gentle confetti (soft circles)
-  function softBurst(x=innerWidth/2, y=innerHeight/2){
-    const c = document.createElement("canvas");
-    c.className="softburst"; document.body.appendChild(c);
-    const ctx=c.getContext("2d"); const DPR = Math.max(1, devicePixelRatio||1);
+  function softBurst(x=innerWidth/2,y=innerHeight/2){
+    const c=document.createElement("canvas"); c.className="softburst"; document.body.appendChild(c);
+    const ctx=c.getContext("2d"); const DPR=Math.max(1,devicePixelRatio||1);
     const resize=()=>{ c.width=innerWidth*DPR; c.height=innerHeight*DPR; }; resize();
-    const colors = [getVar("--accent"), getVar("--accent2"), getVar("--accent3"), getVar("--accent4"), getVar("--accent5")];
-    const N=140; const parts = Array.from({length:N}, ()=> ({
-      x:x*DPR, y:y*DPR, r: 6 + Math.random()*18, a: Math.random()*Math.PI*2, v: 2 + Math.random()*3, life: 60+Math.random()*40, color: colors[Math.floor(Math.random()*colors.length)]
-    }));
-    let t=0; (function loop(){
-      ctx.clearRect(0,0,c.width,c.height);
-      for (const p of parts){
-        p.x += Math.cos(p.a)*p.v; p.y += Math.sin(p.a)*p.v; p.life--;
-        ctx.globalAlpha = Math.max(0, p.life/100);
-        ctx.beginPath(); ctx.fillStyle=p.color; ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+    const colors=[...SOFT_COLORS];
+    const N=140; const parts=Array.from({length:N},()=>({x:x*DPR,y:y*DPR,r:6+Math.random()*18,a:Math.random()*Math.PI*2,v:2+Math.random()*3,life:60+Math.random()*40,color:colors[Math.floor(Math.random()*colors.length)]}));
+    let t=0; (function loop(){ ctx.clearRect(0,0,c.width,c.height);
+      for(const p of parts){ p.x+=Math.cos(p.a)*p.v; p.y+=Math.sin(p.a)*p.v; p.life--; ctx.globalAlpha=Math.max(0,p.life/100); ctx.beginPath(); ctx.fillStyle=p.color; ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); }
+      if(++t<110) requestAnimationFrame(loop); else c.remove(); })();
+  }
+
+  // speech
+  async function speakSeq(list, rate=0.9){ for(const t of list){ await speak(t, rate); await new Promise(r=>setTimeout(r, 100)); } }
+  function speak(t, rate=.9){ return new Promise(res=>{ try{ const u=new SpeechSynthesisUtterance(t); u.rate=rate; u.pitch=1.0; u.onend=res; speechSynthesis.cancel(); speechSynthesis.speak(u);}catch(e){ res(); } }); }
+
+  // WebAudio
+  const AC=window.AudioContext||window.webkitAudioContext; let ctx=null;
+  function ensureAudio(){ if(!ctx){ ctx=new AC(); } return ctx; }
+  function tone(f=440,d=.25,type="sine",vol=.8){ ensureAudio(); const o=ctx.createOscillator(), g=ctx.createGain(); o.type=type; o.frequency.value=f; o.connect(g); g.connect(ctx.destination);
+    const t=ctx.currentTime; g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+.01); g.gain.exponentialRampToValueAtTime(.0001,t+d); o.start(t); o.stop(t+d+.02); }
+  function pop(){ tone(320,.18,"sine",.9); }
+
+  // touch trails
+  let trailsOn = true, lastTrail = 0;
+  function enableTrails(on=true){ trailsOn = on; }
+  function sparkle(x,y){
+    const s=document.createElement("div");
+    s.style.position="fixed"; s.style.left=x+"px"; s.style.top=y+"px"; s.style.width="10px"; s.style.height="10px";
+    s.style.borderRadius="50%"; s.style.pointerEvents="none"; s.style.zIndex=1500;
+    s.style.background=SOFT_COLORS[Math.floor(Math.random()*SOFT_COLORS.length)];
+    s.style.opacity="0.95"; s.style.transform="translate(-50%,-50%) scale(1)";
+    s.style.transition="transform .45s ease, opacity .45s ease";
+    document.body.appendChild(s);
+    requestAnimationFrame(()=>{ s.style.transform="translate(-50%,-50%) scale(0.2)"; s.style.opacity="0"; });
+    setTimeout(()=>s.remove(), 500);
+  }
+
+  // baby lock
+  function injectLock(){
+    const fab=document.createElement("button"); fab.className="button lock-fab"; fab.textContent="🔒 Baby Lock"; fab.setAttribute("aria-label","Enable Baby Lock");
+    document.body.appendChild(fab);
+    const ov=document.createElement("div"); ov.className="lock-overlay"; ov.innerHTML=`
+      <div class="lock-corner" aria-hidden="true"></div>
+      <div class="badge">🔒 Locked — triple‑tap top‑left to exit</div>`;
+    document.body.appendChild(ov);
+    let locked=false, taps=0, tapTimer=null;
+    function lock(){ locked=true; ov.style.display="flex"; }
+    function unlock(){ locked=false; ov.style.display="none"; taps=0; clearTimeout(tapTimer); }
+    fab.addEventListener("click", lock);
+    ov.addEventListener("touchmove", e=>e.preventDefault(), {passive:false});
+    ov.addEventListener("click", e=>{ /* swallow */ });
+    ov.querySelector(".lock-corner").addEventListener("click", ()=>{
+      taps++; if(tapTimer) clearTimeout(tapTimer);
+      tapTimer=setTimeout(()=>{ taps=0; }, 900);
+      if(taps>=3){ unlock(); }
+    });
+  }
+
+
+  // fullscreen helpers
+  function toggleFullscreen(target=document.documentElement){
+    try{
+      if (!document.fullscreenElement) {
+        (target.requestFullscreen||target.webkitRequestFullscreen||target.msRequestFullscreen||function(){})();
+      } else {
+        (document.exitFullscreen||document.webkitExitFullscreen||document.msExitFullscreen||function(){})();
       }
-      if (++t<110) requestAnimationFrame(loop); else c.remove();
-    })();
+    }catch(e){}
+  }
+  function addFullscreenFab(){
+    // Hide in iOS standalone where fullscreen is redundant
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    if (isStandalone) return;
+    const btn=document.createElement('button'); btn.className='button fs-fab'; btn.textContent='⤢ Fullscreen';
+    btn.setAttribute('aria-label','Toggle Fullscreen');
+    btn.addEventListener('click', ()=>toggleFullscreen());
+    document.body.appendChild(btn);
   }
 
-  function getVar(name){
-    return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || "#fff";
+  function init(){
+    const unlock = ()=>{ try{ ensureAudio().resume(); }catch(e){} window.removeEventListener("pointerdown", unlock); }; window.addEventListener("pointerdown", unlock, {once:true});
+    window.addEventListener("pointermove", e=>{
+      if(!trailsOn) return;
+      const now=performance.now(); if(now-lastTrail<18) return; lastTrail=now;
+      sparkle(e.clientX, e.clientY);
+    });
+    injectLock();
+    addFullscreenFab();
+    if('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
   }
 
-  // ripple on tap
-  function ripple(el, x, y){
-    const r = document.createElement("span");
-    r.className="ripple"; r.style.left = x+"px"; r.style.top = y+"px";
-    el.appendChild(r); setTimeout(()=> r.remove(), 650);
-  }
-
-  // Voice
-  function speak(t){ try{ const u=new SpeechSynthesisUtterance(t); u.rate=.95; u.pitch=1.0; speechSynthesis.cancel(); speechSynthesis.speak(u);}catch(e){} }
-
-  // WebAudio simple drums & pops
-  function audio(){
-    const C = window.AudioContext || window.webkitAudioContext;
-    const ctx = new C();
-    function pop(){ // short plop
-      const o = ctx.createOscillator(), g=ctx.createGain();
-      o.type="sine"; o.frequency.value=300; o.connect(g); g.connect(ctx.destination);
-      const t=ctx.currentTime; g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.9,t+.01); g.gain.exponentialRampToValueAtTime(.0001,t+.2);
-      o.start(t); o.frequency.exponentialRampToValueAtTime(120,t+.2); o.stop(t+.23);
-    }
-    function kick(){
-      const o = ctx.createOscillator(), g=ctx.createGain(); o.type="sine"; o.connect(g); g.connect(ctx.destination);
-      const t=ctx.currentTime; o.frequency.setValueAtTime(140,t); o.frequency.exponentialRampToValueAtTime(40,t+.35);
-      g.gain.setValueAtTime(1,t); g.gain.exponentialRampToValueAtTime(.0001,t+.35); o.start(t); o.stop(t+.36);
-    }
-    function snare(){
-      const noise = (()=>{ const b=ctx.createBuffer(1, ctx.sampleRate*.2, ctx.sampleRate); const d=b.getChannelData(0);
-        for(let i=0;i<d.length;i++){ d[i]= (Math.random()*2-1) * Math.pow(1-i/d.length, 3); } return b; })();
-      const s=ctx.createBufferSource(); s.buffer=noise; const g=ctx.createGain(); const hp=ctx.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=2000;
-      s.connect(hp); hp.connect(g); g.connect(ctx.destination); const t=ctx.currentTime; g.gain.setValueAtTime(.9,t); g.gain.exponentialRampToValueAtTime(.001,t+.15); s.start(t);
-    }
-    function hat(){
-      const noise = (()=>{ const b=ctx.createBuffer(1, ctx.sampleRate*.05, ctx.sampleRate); const d=b.getChannelData(0);
-        for(let i=0;i<d.length;i++){ d[i]= (Math.random()*2-1) } return b; })();
-      const s=ctx.createBufferSource(); s.buffer=noise; const g=ctx.createGain(); const hp=ctx.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=6000;
-      s.connect(hp); hp.connect(g); g.connect(ctx.destination); const t=ctx.currentTime; g.gain.setValueAtTime(.7,t); g.gain.exponentialRampToValueAtTime(.001,t+.07); s.start(t);
-    }
-    function tom(freq=220){
-      const o = ctx.createOscillator(), g=ctx.createGain(); o.type="sine"; o.frequency.value=freq; o.connect(g); g.connect(ctx.destination);
-      const t=ctx.currentTime; g.gain.setValueAtTime(1,t); g.gain.exponentialRampToValueAtTime(.0001,t+.25); o.start(t); o.stop(t+.26);
-    }
-    return { pop, kick, snare, hat, tom };
-  }
-
-  return { initTheme, THEMES, softBurst, ripple, speak, audio };
+  return { ripple, softBurst, speak, speakSeq, tone, pop, init, enableTrails, toggleFullscreen };
 })();

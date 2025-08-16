@@ -1,0 +1,17 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="manifest" href="../manifest.webmanifest"><title>Rainbow Slide</title><link rel="stylesheet" href="../styles.css"/><script defer src="../js/common.js"></script></head><body>
+<header class="header"><div class="bar container"><div class="brand"><span class="dot"></span> Toddler Play</div><div class="spacer"></div><a class="button" href="sensory.html">⬅ Back</a></div></header>
+<main class="container"><div class="breadcrumb"><a href="../index.html">Home</a> › <a href="sensory.html">Sensory Play</a> › Rainbow Slide</div><h1>🟥 Rainbow Slide</h1>
+<div class="tile" id="pane" style="height:68vh; margin-top:14px"></div></main>
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+  App.init();
+  const el=document.getElementById("pane"); const c=document.createElement("canvas"); el.appendChild(c); const ctx=c.getContext("2d"); const DPR=devicePixelRatio||1;
+  function size(){ c.width=el.clientWidth*DPR; c.height=el.clientHeight*DPR; c.style.width="100%"; c.style.height="100%"; } size(); addEventListener("resize", size);
+  let t=0, dir=1;
+  function draw(){ t+=dir*2; const w=c.width, h=c.height; for(let y=0;y<h;y++){ const hue = (t+y/3)%360; ctx.fillStyle=`hsl(${hue}, 90%, 60%)`; ctx.fillRect(0,y,w,1); } requestAnimationFrame(draw); }
+  draw();
+  el.addEventListener("click",()=>{ dir*=-1; });
+  el.addEventListener("touchstart",()=>{ dir*=-1; }, {passive:true});
+});
+</script></body></html>

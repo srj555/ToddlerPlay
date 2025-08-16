@@ -1,0 +1,18 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="manifest" href="../manifest.webmanifest"><title>Lullaby Lights</title><link rel="stylesheet" href="../styles.css"/><script defer src="../js/common.js"></script></head><body>
+<header class="header"><div class="bar container"><div class="brand"><span class="dot"></span> Toddler Play</div><div class="spacer"></div><a class="button" href="calm.html">⬅ Back</a></div></header>
+<main class="container"><div class="breadcrumb"><a href="../index.html">Home</a> › <a href="calm.html">Calm & Night</a> › Lullaby Lights</div><h1>🌙 Lullaby Lights</h1>
+<div class="tile center" id="box" style="height:58vh; flex-direction:column; gap:14px">
+  <div id="orb" style="width:44vmin; height:44vmin; border-radius:50%; background: radial-gradient(circle at 30% 30%, #ffd36e, #9b59b6 70%); filter: blur(.2px)"></div>
+  <div class="row"><button class="button" id="start">Start</button><button class="button" id="stop">Stop</button></div>
+  <div class="hint">Soft breathing glow + gentle tones</div>
+</div></main>
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+  App.init(); let interval=null,t=0;
+  const orb=document.getElementById("orb"); const start=document.getElementById("start"); const stop=document.getElementById("stop");
+  function step(){ t+=.03; const scale=1 + Math.sin(t)*.05; orb.style.transform=`scale(${scale})`; }
+  start.onclick=()=>{ if(interval) return; step(); interval=setInterval(step,60); };
+  stop.onclick=()=>{ clearInterval(interval); interval=null; };
+});
+</script></body></html>

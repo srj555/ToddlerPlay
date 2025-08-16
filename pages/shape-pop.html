@@ -1,0 +1,19 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="manifest" href="../manifest.webmanifest"><title>Shape Pop</title><link rel="stylesheet" href="../styles.css"/><script defer src="../js/common.js"></script></head><body>
+<header class="header"><div class="bar container"><div class="brand"><span class="dot"></span> Toddler Play</div><div class="spacer"></div><a class="button" href="shapes.html">⬅ Back</a></div></header>
+<main class="container"><div class="breadcrumb"><a href="../index.html">Home</a> › <a href="shapes.html">Shapes & Colors</a> › Shape Pop</div><h1>🔶 Shape Pop</h1>
+<div class="tile" id="stage" style="height:68vh; margin-top:14px"></div></main>
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+  App.init(); const el=document.getElementById("stage"); const c=document.createElement("canvas"); const DPR=devicePixelRatio||1;
+  function size(){ c.width=el.clientWidth*DPR; c.height=el.clientHeight*DPR; c.style.width="100%"; c.style.height="100%"; } size(); addEventListener("resize", size); el.appendChild(c);
+  const ctx=c.getContext("2d"); const colors=["#ff4d4d","#ff8a33","#ffd93b","#2ecc71","#3498db","#9b59b6","#ff7eb6"]; const shapes=["circle","square","triangle","star"]; let objs=[];
+  function add(){ const s=shapes[Math.floor(Math.random()*shapes.length)], col=colors[Math.floor(Math.random()*colors.length)]; objs.push({x:Math.random()*c.width,y:c.height+80*DPR,r:(30+Math.random()*50)*DPR,v:.7+Math.random()*1.2,shape:s,col}); }
+  function drawShape(o){ ctx.fillStyle=o.col; ctx.beginPath(); if(o.shape==="circle"){ ctx.arc(o.x,o.y,o.r,0,Math.PI*2); } if(o.shape==="square"){ const r=o.r; ctx.rect(o.x-r,o.y-r,r*2,r*2); } if(o.shape==="triangle"){ const r=o.r; ctx.moveTo(o.x,o.y-r); ctx.lineTo(o.x+r,o.y+r); ctx.lineTo(o.x-r,o.y+r); ctx.closePath(); } if(o.shape==="star"){ const spikes=5, outer=o.r, inner=o.r*.5; let rot=Math.PI/2*3,x=o.x,y=o.y; ctx.moveTo(o.x,o.y-outer); for(let i=0;i<spikes;i++){ x=o.x+Math.cos(rot)*outer; y=o.y+Math.sin(rot)*outer; ctx.lineTo(x,y); rot+=Math.PI/spikes; x=o.x+Math.cos(rot)*inner; y=o.y+Math.sin(rot)*inner; ctx.lineTo(x,y); rot+=Math.PI/spikes; } ctx.lineTo(o.x,o.y-outer); ctx.closePath(); } ctx.fill(); }
+  function loop(){ ctx.clearRect(0,0,c.width,c.height); for(const o of objs){ o.y-=o.v*DPR; drawShape(o); } objs=objs.filter(o=>o.y+o.r>0); if(objs.length<14) add(); requestAnimationFrame(loop); }
+  for(let i=0;i<14;i++) add(); loop();
+  function pop(x,y){ const mx=x*DPR,my=y*DPR; for(let i=objs.length-1;i>=0;i--){ const o=objs[i]; const dx=o.x-mx,dy=o.y-my; if(dx*dx+dy*dy <= (o.r*1.1)**2){ objs.splice(i,1); App.pop(); App.speak(o.shape[0].toUpperCase()+o.shape.slice(1)); App.softBurst(x,y); break; } } }
+  function handle(e){ const r=c.getBoundingClientRect(); if(e.touches){ for(const t of e.touches){ pop(t.clientX-r.left,t.clientY-r.top);} } else { pop(e.clientX-r.left,e.clientY-r.top);} }
+  c.addEventListener("click",handle); c.addEventListener("touchstart",(e)=>{ e.preventDefault(); handle(e); }, {passive:false});
+});
+</script></body></html>

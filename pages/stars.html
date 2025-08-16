@@ -1,0 +1,15 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="manifest" href="../manifest.webmanifest"><title>Stars</title><link rel="stylesheet" href="../styles.css"/><script defer src="../js/common.js"></script></head><body>
+<header class="header"><div class="bar container"><div class="brand"><span class="dot"></span> Toddler Play</div><div class="spacer"></div><a class="button" href="calm.html">⬅ Back</a></div></header>
+<main class="container"><div class="breadcrumb"><a href="../index.html">Home</a> › <a href="calm.html">Calm & Night</a> › Stars</div><h1>💫 Stars</h1>
+<div class="tile" id="sky" style="height:68vh; margin-top:14px"></div></main>
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+  App.init(); const el=document.getElementById("sky"); const c=document.createElement("canvas"); const DPR=devicePixelRatio||1;
+  function size(){ c.width=el.clientWidth*DPR; c.height=el.clientHeight*DPR; c.style.width="100%"; c.style.height="100%"; } size(); addEventListener("resize", size); el.appendChild(c);
+  const ctx=c.getContext("2d"); let stars=[]; function add(x,y){ stars.push({x:x*DPR,y:y*DPR,t:0}); }
+  function loop(){ ctx.clearRect(0,0,c.width,c.height); for(const s of stars){ s.t+=.07; const a=(Math.sin(s.t)+1)/2; ctx.beginPath(); ctx.fillStyle=`rgba(255, 230, 140, ${a})`; ctx.arc(s.x,s.y,5*DPR,0,Math.PI*2); ctx.fill(); } requestAnimationFrame(loop); } loop();
+  function tap(e){ const r=c.getBoundingClientRect(); const x=(e.touches?e.touches[0].clientX:e.clientX)-r.left; const y=(e.touches?e.touches[0].clientY:e.clientY)-r.top; add(x,y); App.tone(660,.15,"sine",.2); App.softBurst(x,y); }
+  c.addEventListener("click",tap); c.addEventListener("touchstart",(e)=>{ e.preventDefault(); tap(e); }, {passive:false});
+});
+</script></body></html>

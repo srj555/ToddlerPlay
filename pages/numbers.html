@@ -1,0 +1,75 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="manifest" href="../manifest.webmanifest">
+<title>Count with Dots — Baby</title>
+<link rel="stylesheet" href="../styles.css"/><script defer src="../js/common.js"></script>
+</head><body>
+<header class="header"><div class="bar container">
+  <div class="brand"><span class="dot"></span> Toddler Play</div><div class="spacer"></div><a class="button" href="abc.html">⬅ Back</a>
+</div></header>
+<main class="container">
+  <div class="breadcrumb"><a href="../index.html">Home</a> › <a href="abc.html">ABC & Numbers</a> › Count with Dots</div>
+  <h1>🔢 Count with Dots</h1>
+  <div class="tile" id="stage" style="height:60vh; margin-top:14px; position:relative"></div>
+  <div class="row" style="margin-top:12px">
+    <button class="button" id="prev">◀</button>
+    <button class="button" id="say">🔊 Say Number</button>
+    <button class="button" id="next">▶</button>
+  </div>
+  <p class="hint" style="text-align:center; margin-top:10px">Tap a dot to pop. Tap 🔊 to hear the number again.</p>
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+  App.init();
+  const stage=document.getElementById("stage"); let i=1;
+
+  function layoutDots(n){
+    stage.innerHTML="";
+    const w=stage.clientWidth, h=stage.clientHeight;
+    const cols = Math.ceil(Math.sqrt(n));
+    const rows = Math.ceil(n/cols);
+    const cellW = w / (cols+1);
+    const cellH = h / (rows+1);
+    const size = Math.min(cellW, cellH) * 0.9;
+    for(let k=0;k<n;k++){
+      const col = (k % cols) + 1;
+      const row = Math.floor(k / cols) + 1;
+      const x = col * cellW, y = row * cellH;
+      const d=document.createElement("div");
+      d.style.width=d.style.height= size+"px";
+      d.style.borderRadius="50%";
+      d.style.background="var(--accent3)";
+      d.style.position="absolute";
+      d.style.left=(x - size/2) + "px";
+      d.style.top=(y - size/2) + "px";
+      d.style.boxShadow="0 12px 28px rgba(0,0,0,.28)";
+      d.style.display="grid";
+      d.style.placeItems="center";
+      d.style.fontWeight="900";
+      d.style.color="#001";
+      d.style.userSelect="none";
+      // pointer events
+      const onDown = (clientX, clientY)=>{
+        App.pop(); const r=d.getBoundingClientRect();
+        App.ripple(d, (clientX - r.left), (clientY - r.top)); d.remove();
+      };
+      d.addEventListener("pointerdown", e=>{ onDown(e.clientX, e.clientY); });
+      d.addEventListener("touchstart", e=>{ const t=e.changedTouches[0]; onDown(t.clientX, t.clientY); }, {passive:true});
+      stage.appendChild(d);
+    }
+  }
+
+  function speakCurrent(){ App.speak(String(i)); }
+  function redraw(){ layoutDots(i); speakCurrent(); }
+
+  document.getElementById("next").onclick=()=>{ i=Math.min(20, i+1); redraw(); };
+  document.getElementById("prev").onclick=()=>{ i=Math.max(1, i-1); redraw(); };
+  document.getElementById("say").onclick=()=>{ speakCurrent(); };
+  window.addEventListener("resize", ()=>layoutDots(i));
+
+  redraw();
+});
+</script>
+
+</body></html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="manifest" href="../manifest.webmanifest">
+<title>ABC Fun — Phonics</title>
+<link rel="stylesheet" href="../styles.css"/><script defer src="../js/common.js"></script>
+</head><body>
+<header class="header"><div class="bar container">
+  <div class="brand"><span class="dot"></span> Toddler Play</div><div class="spacer"></div><a class="button" href="abc.html">⬅ Back</a>
+</div></header>
+<main class="container">
+  <div class="breadcrumb"><a href="../index.html">Home</a> › <a href="abc.html">ABC & Numbers</a> › ABC Fun</div>
+  <h1>🔠 ABC Fun</h1>
+  <div class="tile center" id="panel" style="height:60vh; flex-direction:column; gap:22px">
+    <div id="letter" class="big" role="button" aria-label="Letter" style="font-size:clamp(90px, 24vw, 200px)">A</div>
+    <div class="row">
+      <button class="button" id="sayLetter">Say Letter</button>
+      <button class="button" id="sayWord">Say Word</button>
+      <button class="button" id="sayBoth">Say Both</button>
+    </div>
+    <div class="row">
+      <button class="button" id="prev">◀ Prev</button>
+      <button class="button" id="phonics">Phonics: Off</button>
+      <button class="button" id="next">Next ▶</button>
+    </div>
+  </div>
+  <p class="hint" style="text-align:center; margin-top:10px">Tap the big letter to repeat. Phonics speaks the letter sound (e.g., “buh”).</p>
+</main>
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+  App.init();
+  const SET=[["A","Apple"],["B","Ball"],["C","Cat"],["D","Dog"],["E","Elephant"],["F","Fish"],["G","Grapes"],["H","Hat"],["I","Ice"],["J","Juice"],["K","Kite"],["L","Lion"],["M","Moon"],["N","Nose"],["O","Orange"],["P","Panda"],["Q","Queen"],["R","Rabbit"],["S","Sun"],["T","Tiger"],["U","Umbrella"],["V","Van"],["W","Water"],["X","Box"],["Y","Yoyo"],["Z","Zebra"]];
+  const PHONICS={A:"a",B:"buh",C:"kuh",D:"duh",E:"eh",F:"fff",G:"guh",H:"huh",I:"ih",J:"juh",K:"kuh",L:"lll",M:"mmm",N:"nnn",O:"o",P:"puh",Q:"kw",R:"rrr",S:"sss",T:"tuh",U:"uh",V:"vvv",W:"wuh",X:"ks",Y:"yuh",Z:"zzz"};
+  let i=0; let phonics = localStorage.getItem("tp_phonics")==="1";
+  const letter=document.getElementById("letter"); const btnPhonics=document.getElementById("phonics");
+  function render(){ letter.textContent=SET[i][0]; btnPhonics.textContent="Phonics: " + (phonics?"On":"Off"); }
+  function sayLetter(){ const L=SET[i][0]; App.speak(phonics?(PHONICS[L]||L):L); }
+  function sayWord(){ App.speak(SET[i][1]); }
+  function sayBoth(){ const L=SET[i][0]; const first=phonics?(PHONICS[L]||L):L; App.speakSeq([first, SET[i][1]], .9); }
+  document.getElementById("sayLetter").onclick=sayLetter;
+  document.getElementById("sayWord").onclick=sayWord;
+  document.getElementById("sayBoth").onclick=sayBoth;
+  document.getElementById("next").onclick=()=>{ i=(i+1)%SET.length; render(); };
+  document.getElementById("prev").onclick=()=>{ i=(i-1+SET.length)%SET.length; render(); };
+  btnPhonics.onclick=()=>{ phonics=!phonics; localStorage.setItem("tp_phonics", phonics?"1":"0"); render(); };
+  letter.addEventListener("click", sayLetter);
+  render();
+});
+</script></body></html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="manifest" href="../manifest.webmanifest"><title>Xylophone</title><link rel="stylesheet" href="../styles.css"/><script defer src="../js/common.js"></script></head><body>
+<header class="header"><div class="bar container"><div class="brand"><span class="dot"></span> Toddler Play</div><div class="spacer"></div><a class="button" href="music.html">⬅ Back</a></div></header>
+<main class="container"><div class="breadcrumb"><a href="../index.html">Home</a> › <a href="music.html">Music & Rhythm</a> › Xylophone</div><h1>🎼 Xylophone</h1>
+<div class="row" id="bars" style="gap:10px; flex-wrap:nowrap; overflow-x:auto; padding:6px 2px"></div></main>
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+  App.init();
+  const notes=[["C4",261.63,"#ff4d4d"],["D4",293.66,"#ff8a33"],["E4",329.63,"#ffd93b"],["F4",349.23,"#2ecc71"],["G4",392.00,"#3498db"],["A4",440.00,"#9b59b6"],["B4",493.88,"#ff7eb6"],["C5",523.25,"#8e6430"]];
+  const bars=document.getElementById("bars");
+  notes.forEach(([n,f,hex])=>{ const d=document.createElement("div"); d.className="tile"; d.style.minWidth="110px"; d.style.height="280px"; d.style.background=hex; d.style.borderColor="#ffffff30"; d.style.display="flex"; d.style.flexDirection="column"; d.style.justifyContent="flex-end"; d.style.alignItems="center"; const label=document.createElement("div"); label.textContent=n; label.style.margin="10px"; label.style.fontWeight="900"; d.appendChild(label);
+    function play(e){ App.tone(f,.3,"sine",.8); const r=d.getBoundingClientRect(); const x=(e.clientX||e.changedTouches?.[0]?.clientX)-r.left; const y=(e.clientY||e.changedTouches?.[0]?.clientY)-r.top; App.ripple(d,x,y); }
+    d.addEventListener("click",play); d.addEventListener("touchstart",play,{passive:true}); bars.appendChild(d);
+  });
+});
+</script></body></html>
